@@ -2,12 +2,13 @@
 import zabbixLLD
 import subprocess
 import sys
+import json
 
-monitor_key = (
-    "top",
-    "vim"
-)
-action = sys.argv[1]
+with open('process.json', 'r') as f:
+    config = json.load(f) 
+
+monitor_key = config["process"]
+
 if len(sys.argv) == 1 :
     print(sys.argv[0] + " [discovery|getcode]")
     sys.exit()

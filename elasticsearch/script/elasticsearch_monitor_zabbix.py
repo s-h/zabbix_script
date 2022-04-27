@@ -4,7 +4,11 @@
 import requests
 import sys
 
+from requests.auth import HTTPBasicAuth
+
 ES_ENDPOINT = "http://127.0.0.1:9200"
+ES_USER = ""
+ES_PASSWORD = ""
 
 class EsError(Exception):
     def __init__(self):
@@ -17,14 +21,15 @@ class EsError(Exception):
         return repr(self.what)
 
 class ES_MONITOR(object):
-    def __init__(self, es_server:str):
+    def __init__(self, es_server:str, user:str, password:str):
         self.es_server = es_server
-        self.data = {"data": []}
+        self.user = user
+        self.password = password
         self.init_get_cluster()
 
     def url_get(self, uri:str, is_json:bool=False):
         try:
-            resp = requests.get(self.es_server + uri)
+            resp = requests.get(self.es_server + uri, auth=HTTPBasicAuth(self.user, self.password))
             if is_json:
                 return resp.json()
             else:
@@ -59,6 +64,6 @@ class ES_MONITOR(object):
 
 if __name__ == "__main__":
     args = sys.argv[1]
-    es_monitor = ES_MONITOR(ES_ENDPOINT)
+    es_monitor = ES_MONITOR(ES_ENDPOINT, ES_USER, ES_PASSWORD)
     print(es_monitor.get_cluster_info(args))
     
